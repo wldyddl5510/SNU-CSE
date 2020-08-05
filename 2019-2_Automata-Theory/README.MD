@@ -2,4 +2,4 @@
 
 ### Prof. G.S.Park
 
-* Since I withdrawed the class due to personal extenuating circumstances, only have homework 1
+* Since I withdrew the class due to personal extenuating circumstances, only have homework 1
