@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct element{
+		char d;
+		struct element *next;
+};
+typedef struct element element;
+
+struct stack{
+	char c;
+	element* top;
+};
+typedef struct stack stack;
+
+void push( int d, stack *a){
+		element* p;
+		p = malloc(sizeof(element));
+		p->d=d;
+		p->next = a->top;
+		a->top = p;
+		a->c++;
+		if(p!=NULL) free(p);
+}
+int pop(stack *a){
+		char d;
+		element* p;
+		d = a->top->d;
+		p = a->top;
+		a->top=a->top->next;
+		a->c--;
+		if(p != NULL)free(p);
+		return d;
+}
+
+int main(void){
+		char input;
+		stack a;
+		int first, second,result;
+		int b;
+
+		while(scanf("%c",&input)!=EOF){
+				if(input >= '0' && input <= '9'){
+					push(input,&a);
+				}
+				else if((input == '+') || (input == '-') || (input == '*')){
+						first=pop(&a);
+						second=pop(&a);
+
+						if(input == '+'){
+							result=first+second;
+						}
+						else if(input=='-'){
+							result = first - second;
+						}
+						else if(input == '*'){
+								result = first*second;
+						}
+
+					push(result, &a);
+				}
+		}
+		b=(int)pop(&a);
+		printf("%d\n",b);
+		return 0;
+}

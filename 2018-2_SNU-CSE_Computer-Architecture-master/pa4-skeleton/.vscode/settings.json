@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "isa.h": "c",
+        "sim.h": "c"
+    }
+}

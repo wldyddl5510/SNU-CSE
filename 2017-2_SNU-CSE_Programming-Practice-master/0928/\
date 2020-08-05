@@ -1,0 +1,33 @@
+#include <stdio.h>
+int main(void)
+{
+	char input[1000]={0};
+	int count=0;
+	int i;
+	int b;
+	int j;
+	int k;
+	char output[1000]={0};
+
+	scanf("%d",&b);
+	for(j=0;j<b;j++)
+	{
+		scanf("%c",&input[j]);
+	}
+	for(i=0;i<b;i++)
+	{
+		output[i]=input[(b-i)];
+	}
+
+	for(k=0;k<b;k++)
+	{
+		if(output[k]!=input[k])
+	 	{
+		printf("False");
+		return 0;
+		}
+	}
+	printf("True");
+	return 0;
+}
+

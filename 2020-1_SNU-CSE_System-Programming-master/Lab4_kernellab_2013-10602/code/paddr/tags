@@ -1,0 +1,24 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+DBFS_FILE_PATH	app.c	9;"	d	file:
+KDIR	Makefile	/^KDIR = \/lib\/modules\/$(shell uname -r)\/build$/;"	m
+PADDR	app.c	10;"	d	file:
+dbfs_fops	dbfs_paddr.c	/^static const struct file_operations dbfs_fops = {$/;"	v	typeref:struct:file_operations	file:
+dbfs_module_exit	dbfs_paddr.c	/^module_exit(dbfs_module_exit);$/;"	v
+dbfs_module_exit	dbfs_paddr.c	/^static void __exit dbfs_module_exit(void)$/;"	f	file:
+dbfs_module_init	dbfs_paddr.c	/^module_init(dbfs_module_init);$/;"	v
+dbfs_module_init	dbfs_paddr.c	/^static int __init dbfs_module_init(void)$/;"	f	file:
+dir	dbfs_paddr.c	/^static struct dentry *dir, *output;$/;"	v	typeref:struct:dentry	file:
+main	app.c	/^int main(void)$/;"	f
+obj-m	Makefile	/^obj-m := dbfs_paddr.o$/;"	m
+output	dbfs_paddr.c	/^static struct dentry *dir, *output;$/;"	v	typeref:struct:	file:
+packet	app.c	/^struct packet {$/;"	s	file:
+paddr	app.c	/^        unsigned long paddr;$/;"	m	struct:packet	file:
+pid	app.c	/^        pid_t pid;$/;"	m	struct:packet	file:
+read_output	dbfs_paddr.c	/^static ssize_t read_output(struct file *fp,$/;"	f	file:
+task	dbfs_paddr.c	/^static struct task_struct *task;$/;"	v	typeref:struct:task_struct	file:
+vaddr	app.c	/^        unsigned long vaddr;$/;"	m	struct:packet	file:

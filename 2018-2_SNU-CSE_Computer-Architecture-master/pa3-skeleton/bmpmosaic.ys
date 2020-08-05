@@ -1,0 +1,177 @@
+bmp_mosaic:
+    rmmovq %rdx, -64(%rsp)
+    irmovq $3, %r8
+    mulq   %r8, %rsi
+    rrmovq %rsi, %rax
+    andq   %r8, %rax
+    je L2
+    irmovq $4, %r9
+    rrmovq %rsi, %rdx
+    rrmovq %rsi, %rax
+    divq %r9, %rdx
+    mulq %r9, %rdx
+    subq %rdx, %rax   #rax = (3*w)%4
+    subq %rax, %r9   #r9 = 4-3*w%4 = padding
+    jmp L3
+
+L2:
+   irmovq $0, %r9
+L3:
+   addq %rsi, %r9          #%r9 => oneline -8(%rsp) originally
+   irmovq    $0, %r10          #-80(%rsp); base ==>%r10으로 대체
+   jmp L4 #i test
+
+L21:
+   mrmovq -64(%rsp), %r11   #r11 ===> i로 지정, 일단 height
+   iaddq $-1, %r11          #height-1
+   mulq %r9, %r11          #r11 == oneline*(height-1) initial i 값
+   jmp L5
+L20:
+   irmovq   $0, %r12          #r12 == j
+   jmp   L6
+L19:
+   irmovq $0, %rdx
+   irmovq $0, %r13          # %r13은 k
+   rmmovq %rdx, -56(%rsp)       #cnt
+   rmmovq %rdx, -48(%rsp)       #color
+   jmp L7
+L12:
+   irmovq    $0, %r14 #r14에 l 저장
+   jmp L8
+
+L10: #첫번째 루프 내용
+   mrmovq -56(%rsp), %rbx       #rbx에 cnt 저장
+   mrmovq -48(%rsp), %rax       #rax에 color 저장
+   iaddq $1, %rbx            #cnt++
+   rmmovq %rbx, -56(%rsp)
+
+   rrmovq %r11, %rdx          #i
+   rrmovq %r12, %rbx          #j
+   addq %rdx, %rbx          #rbx = i+j
+
+   rrmovq %r9, %rdx
+   mulq %r13, %rdx          #rdx = k*oneline
+   subq %rdx, %rbx
+   addq %r10, %rbx          #rbx = i+j - k*oneline + base
+   rrmovq %r14, %rdx
+   mulq %r8, %rdx            #rdx = 3*l
+   addq %rdx, %rbx          #rbx==loc
+
+   addq %rdi, %rbx          #rbx = loc+imgptr
+   mrmovb (%rbx), %rbx
+   addq %rbx, %rax
+   rmmovb %rax, -48(%rsp)
+
+   iaddq   $1, %r14
+
+L8: #l 테스트
+   rrmovq %r14, %rax
+   subq %rcx, %rax
+   jge   L9
+
+   rrmovq %r14, %rdx
+   mulq %r8, %rdx
+   rrmovq %r12, %rax       #j
+   addq %rdx, %rax       #j+3*l
+   subq %rsi, %rax       #j+3*l-3*width
+   jl L10
+
+L9: #k값 업데이트
+   iaddq   $1, %r13
+
+L7: #첫번째 inner k 조건 test
+   rrmovq %r13, %rax
+   subq %rcx, %rax
+   jge L11
+
+   rrmovq %r9, %rax
+   mulq %r13, %rax
+   rrmovq %r11, %rdx
+   subq %rax, %rdx           #rdx=i-k*oneline
+   rrmovq %rdx, %rax
+   andq %rax, %rax
+   jge L12 #l loop 단계로 넘어감. 끝난 경우 밑에 L11로
+
+L11:
+   irmovq   $0, %rbp #두번째 inner k ==> %rbp
+   jmp   L13
+
+L18: #두번째 inner l initialize
+   irmovq $0, %rdx
+   rmmovq %rdx, -16(%rsp)
+   jmp L14
+
+L16: #두번째 루프
+   mrmovq -56(%rsp), %rbx    #rbx에 cnt 저장
+   mrmovq -48(%rsp), %rax    #rax에 color 저장
+   divq %rbx, %rax       #rax = color/cnt
+
+   rrmovq %r11, %rdx       #i
+   rrmovq %r12, %rbx       #j
+   addq %rdx, %rbx       #rbx = i+j
+   rrmovq %r9, %rdx
+   mulq %rbp, %rdx       #rdx = k*oneline
+   subq %rdx, %rbx
+   addq %r10, %rbx       #rbx = base + i+j - k*oneline
+   mrmovq -16(%rsp), %rdx
+   mulq %r8, %rdx
+   addq %rdx, %rbx       #rbx = loc
+   addq %rdi, %rbx       #rbx =  loc+imgptr
+
+   rmmovb %rax, (%rbx)      # imgptr[loc] = rax (color/cnt)
+
+   mrmovq -16(%rsp), %rax      #l update
+   iaddq $1, %rax
+   rmmovq %rax, -16(%rsp)
+
+L14: #inner 두번째 l 테스트
+   mrmovq   -16(%rsp), %rax
+   subq %rcx, %rax
+   jge L15
+
+   mrmovq -16(%rsp), %rdx
+   mulq %r8, %rdx            #3*l
+   rrmovq %r12, %rax          #j
+   addq %rdx, %rax          #j+3*l
+   subq %rsi, %rax          #j+3*l-3*width
+   jl L16
+
+L15: #두번째 inner k 업데이트
+   iaddq   $1, %rbp
+
+L13: #두번째 inner k test
+   rrmovq %rbp, %rax
+   subq %rcx, %rax
+   jge L17
+
+   rrmovq %r9, %rax
+   mulq %rbp, %rax          #rax = oneline*k
+   rrmovq %r11, %rdx          #i
+   subq %rax, %rdx
+   rrmovq %rdx, %rax
+   andq %rax, %rax
+   jge L18
+
+L17:                   #inner k 끝나고 j(%r12) 업뎃
+   rrmovq %rcx, %rax
+   mulq %r8, %rax
+   addq %rax, %r12          #j+=3*size
+
+L6:                   #j test && i 업데이트
+   rrmovq %r12, %rax
+   subq %rsi, %rax          #j-3*width 비교후 첫번째 루프 실행
+   jl L19
+
+   #j가 다 끝났다면, i 값 업데이트
+   rrmovq %r9, %rax          #rax = oneline
+   mulq %rcx, %rax
+   subq %rax, %r11
+
+L5:
+   iaddq   $0, %r11
+   jge   L20
+   iaddq $1, %r10          #base 업데이트
+L4:
+   rrmovq %r10, %rax
+   iaddq $-2, %rax          #base test
+   jle  L21

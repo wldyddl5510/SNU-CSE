@@ -1,0 +1,183 @@
+#include <stdio.h>
+#include <string.h>
+/*
+typedef struct {
+	int human;
+	int com;
+} budget budget;
+*/
+
+typedef struct {
+	int budget;
+	int bet;
+	int order;
+	int rank;
+	int isover;
+} __player Player;
+
+
+//win function
+void win(Player *winner, Player *loser) {
+	winner->budget = winner->budget + winner->bet + loser->bet;
+	winner->bet = 0;
+	winner->order = 0;
+	winner->rank = 0;
+	winner->isover = 0;
+	loser->bet = 0;
+	loser->order = 0;
+	loser->rank = 0;
+	loser->isover = 0;
+}
+
+//winner determine function
+void determine(Player *a, Player *b) {
+	if(a->rank > b->rank) 
+		win(*a, *b);
+	else if(a->rank < b->rank) 
+		win(*b, *a);
+	else {
+		a->budget = a->budget + a->bet;
+		b->budget = b->budget + b->bet;
+		a->bet = 0;
+		a->order = 0;
+		a->rank = 0;
+		a-> isover = 0;
+		b->bet = 0;
+		b->order = 0;
+		b0>rank = 0;
+		b->isover = 0;
+	}
+}
+
+void start() {
+}
+//read and com<-0, hu<-1 insert
+void add (int s, int a , Player *human, Player *com) {
+	if(s == 1) 
+		human->budget = ((human->budget) + a);
+
+	else 
+		com->budget = ((com->budget) + a);
+}
+
+void minus (int s, int a, Player *human, Player *com) {
+	if(s == 1) 
+		human->budget = ((human->budget) - a);
+	else
+		com->budget = ((com->budget) - a);
+}
+
+void value (int s, int a, Player *human, Player *com) {
+	if(s == 1)
+		human->rank = a;
+	else
+		com->rank = a;
+}
+
+void show (int s, Player *human, Player *com) {
+	if(s == 1)
+		printf("%d\n", human->budget);
+	else
+		printf("%d\n", com->budget);
+}
+
+void raise (int s, Player *human, Player *com) {
+	if(s == 1) {
+		human->budget = human->budget - human->bet;
+		if(human->budget > 0) {
+			if(com->budget > human->bet) {
+				com->budget = com->budget - human->bet;
+				human->bet = 2 * (human->bet);
+				com->bet = 2 * (com->bet);
+			}
+			else {	//game ends
+				win(*human, *com);
+			}
+		}
+		else 
+			printf("NOT ENOUGH MONEY\n");
+	}
+	
+	else {
+		com->budget = com->budget - com->bet;
+		if(com->budget > 0) {
+			if(human->budget > human->bet) {
+				human->budget = human->budget - com->bet;
+				com->bet = 2 * (com->bet);
+				human->bet = 2 * (human->bet);
+			}
+			else { 	//game ends
+				win(*human, *com);
+			}
+		}
+		else
+			printf("NOT ENOUGH MONEY\n");
+	}
+}
+
+void call (int s, Player *human, Player *com) {
+	if(s == 1) {
+		human->isover = 1;
+	}
+	else {
+		com->isover = 1;
+	}
+
+	if(human->isover == 1 && com->isover == 1)
+		determine(*human, *com);
+}
+
+void fold (int s, Player *human, Player *com) {
+	int win = com->bet;
+	if( s == 1) {
+		human->budget = (human->budget) + win;
+		com->budget = (com->budget) - win;
+	}
+}
+
+int main(void) {
+	while(1) {
+		char subject[10];
+		char action[10];
+		int s = 0;
+		Player human = {0, 0, 0, 0, 0};
+		Player com = {0, 0, 0, 0, 0};
+
+		if(scanf("%s",subject) == EOF)
+			break;
+
+		if(strcmp(subject, "HUMAN") == 1)
+			s = 1;
+
+		scanf("%s",action)
+
+		if(strcmp("START", action) == 1) {
+		}
+
+		else if(strcmp("RAISE", action) == 1) {
+		}
+
+		else if(strcmp("CALL", action) == 1) {
+		}
+
+		else if(strcmp("FOLD", action) == 1) {
+		}
+
+		else if(strcmp("SHOW", action) == 1) {
+		}
+
+		else if(strcmp("ADD", action) == 1) {
+		}
+
+		else if(strcmp("MINUS", action) == 1) {
+		}
+
+		else if(strcmp("VALUE",action) == 1) {
+		}
+
+		if(human.isover == 1 && com.isover == 1) {
+			printf("\n");
+		}
+	}
+	return 0;
+}

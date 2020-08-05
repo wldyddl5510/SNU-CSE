@@ -1,0 +1,250 @@
+bmp_mosaic:
+    iaddq   $-24,%rsp
+    rmmovq  %rdi, -96(%rsp)
+    rmmovq  %rsi, -104(%rsp)
+    rmmovq  %rdx, -112(%rsp)
+    rmmovq  %rcx, -120(%rsp)
+
+    mrmovq -104(%rsp), %rdx
+    rrmovq  %rdx, %rax
+    addq    %rax, %rax
+    addq    %rdx, %rax
+    rmmovq  %rax, -64(%rsp)
+
+    mrmovq  -64(%rsp), %rax
+    irmovq  $3, %r8
+    andq    %r8, %rax
+    je      L2
+    mrmovq  -64(%rsp), %rax
+    rrmovq  %rax, %rcx
+    iaddq   $4, %rcx
+    mrmovq  -64(%rsp), %rax
+    andq    %r8, %rdx
+    addq    %rdx, %rax
+    andq    %r8, %rax
+    subq    %rdx, %rax
+    subq    %rax, %rcx
+    rrmovq  %rcx, %rax
+    jmp     L3
+L2:
+    mrmovq  -64(%rsp), %rax
+L3:
+    rmmovq  %rax, -72(%rsp)
+    mrmovq  -112(%rsp), %rax
+    rrmovq  %rax, %rdx
+    iaddq   $-1, %rdx
+    mrmovq  -72(%rsp), %rax
+    mulq    %rdx, %rax
+    rmmovq  %rax, 16(%rsp)
+    jmp     L4
+L19:
+    xorq    %r9, %r9
+    rmmovq  %r9, 8(%rsp)
+    jmp     L5
+L18:
+    mrmovq  16(%rsp), %rdx
+    mrmovq  8(%rsp), %rax
+    addq    %rdx, %rax
+    rmmovq  %rax, -80(%rsp)
+    rmmovq  %r9, (%rsp)
+    rmmovq  %r9, -8(%rsp)
+    rmmovq  %r9, -16(%rsp)
+    rmmovq  %r9, -24(%rsp)
+    rmmovq  %r9, -32(%rsp)
+    jmp     L6
+L11:
+    rmmovq  %r9, -40(%rsp)
+    jmp     L7
+L9:
+    iaddq   $1, %r9
+    rmmovq  %r9, (%rsp)
+    mrmovq  -32(%rsp), %rax
+    mrmovq  -72(%rsp), %rax
+    mrmovq  -80(%rsp), %rdx
+    rrmovq  %rdx, %rcx
+    subq    %rax, %rcx
+    mrmovq  -40(%rsp), %rdx
+    rrmovq  %rdx, %rax
+    addq    %rax, %rax
+    addq    %rdx, %rax
+    addq    %rcx, %rax
+    rmmovq  %rax, -88(%rsp)
+
+    mrmovq  -88(%rsp), %rdx
+    mrmovq  -96(%rsp), %rax
+    addq    %rdx, %rax
+    mrmovb  (%rax), %rax
+    addq    %rax, -8(%rsp)
+    mrmovq  -88(%rsp), %rax
+    rrmovq  %rax, %rdx
+    iaddq   $1, %rdx
+    mrmovq  -96(%rsp), %rax
+    addq    %rdx, %rax
+    mrmovb  (%rax), %rax
+    mrmovq  -16(%rsp), %r10
+    addq    %rax, %r10
+    rmmovq  %r10, -16(%rsp)
+
+    mrmovq  -88(%rsp), %rax
+    rrmovq  %rax, %rdx
+    iaddq   $2, %rdx
+    mrmovq  -96(%rsp), %rax
+    addq    %rdx, %rax
+    mrmovb  (%rax), %rax
+    mrmovq  -24(%rsp), %r10
+    addq    %rax, %r10
+    rmmovq  %r10, -24(%rsp)
+
+    mrmovq  -40(%rsp), %r10
+    iaddq   $1, %r10
+    rmmovq  %r10, -40(%rsp)
+
+L7:
+    mrmovq  -40(%rsp), %rax
+    mrmovq  -120(%rsp), %r10
+    rrmovq  %rax, %r11  
+    subq    %r10, %r11
+    jge     L8
+    mrmovq  -40(%rsp), %rdx
+    rrmovq  %rdx, %rax
+    addq    %rax, %rax
+    addq    %rax, %rdx
+    mrmovq  8(%rsp), %rax
+    addq    %rdx, %rax
+    mrmovq  -64(%rsp), %r11
+    subq    %rax, %r11
+    jg      L9
+L8:
+    mrmovq  -32(%rsp), %r10
+    iaddq   $1, %r10
+    rmmovq  %r10, -32(%rsp)
+L6:
+    mrmovq  -32(%rsp), %rax
+    mrmovq  -120(%rsp), %r11
+    rrmovq  %rax, %r12
+    subq    %r11, %r12   
+    jge     L10
+    mrmovq  -32(%rsp), %rax
+    mrmovq  -72(%rsp), %r8    
+    mulq    %r8, %rax
+    mrmovq  16(%rsp), %rdx
+    subq    %rax, %rdx
+    rrmovq  %rdx, %rax
+    andq    %rax, %rax
+    jns     L11
+L10:
+    xorq    %r9, %r9
+    mrmovq  %r9, -48(%rsp)
+    jmp     L12
+L17:
+    rmmovq  %r9, -56(%rsp)
+    jmp     L13
+L15:
+    mrmovq  -48(%rsp), %rax
+    mrmovq  -72(%rsp), %r10
+    mulq    %r10, %rax
+    mrmovq  -80(%rsp), %rdx
+    rrmovq  %rdx, %rcx
+    subq    %rax, %rcx
+    mrmovq  -56(%rsp), %rdx
+    rrmovq  %rdx, %rax
+    addq    %rax, %rax
+    addq    %rdx, %rax
+    addq    %rcx, %rax
+    rmmovq  %rax, -88(%rsp)
+    
+    mrmovq  -8(%rsp), %rax
+    mrmovq  (%rsp), %r11
+    divq    %r11, %rax
+    rrmovq  %rax, %rcx
+    mrmovq  -88(%rsp), %rdx
+    mrmovq  -96(%rsp), %rax
+    addq    %rdx, %rax
+    rmmovb  %rcx, (%rax)
+
+    mrmovq  -16(%rsp), %rax
+    mrmovq  (%rsp), %r12
+    divq    %r12, %rax
+    rrmovq  %rax, %rcx
+    mrmovq  -88(%rsp), %rax
+    rrmovq  %rax, %rdx
+    iaddq   $1, %rdx
+    mrmovq  -96(%rsp), %rax
+    addq    %rdx, %rax
+    rmmovb  %rcx, (%rax)
+
+    mrmovq  -24(%rsp), %rax
+    mrmovq  (%rsp), %r8
+    divq    %r8, %rax
+    rrmovq  %rax, %rcx
+    mrmovq  -88(%rsp), %rax
+    rrmovq  %rax, %rdx
+    iaddq   $2, %rdx
+    mrmovq  -96(%rsp), %rax
+    addq    %rdx, %rax
+    rmmovb  %rcx, (%rax)
+
+    mrmovq  -56(%rsp), %r9
+    iaddq   $1, %r9
+    rmmovq  %r9, -56(%rsp)
+
+L13:
+    mrmovq  -56(%rsp), %rax
+    mrmovq  -120(%rsp), %r10
+    rrmovq  %rax, %r11
+    subq    %r10, %r11
+    jge     L14
+    mrmovq  -56(%rsp), %rdx
+    rrmovq  %rdx, %rax
+    addq    %rax, %rax
+    addq    %rax, %rdx
+    mrmovq  8(%rsp), %rax
+    addq    %rdx, %rax
+    mrmovq  -64(%rsp), %r12
+    subq    %rax, %r12
+    jg      L15
+
+L14:
+    mrmovq  -48(%rsp), %r13
+    iaddq   $1, %r13
+    rmmovq  %r13, -48(%rsp)
+L12:
+    mrmovq  -48(%rsp), %rax
+    mrmovq  -120(%rsp), %r8
+    rrmovq  %rax, %r9
+    subq    %r8, %r9
+    jge     L16
+    mrmovq  -48(%rsp), %rax
+    mrmovq  -72(%rsp), %r10
+    mulq    %r10, %rax
+    mrmovq  16(%rsp), %rdx
+    subq    %rax, %rdx
+    rrmovq  %rdx, %rax
+    andq    %rax, %rax
+    jns     L17
+L16:
+    mrmovq  -120(%rsp), %rdx
+    rrmovq  %rdx, %rax
+    addq    %rax, %rax
+    addq    %rdx, %rax
+    mrmovq  8(%rsp), %r11
+    addq    %rax, %r11
+    rmmovq  %r11, 8(%rsp)
+L5:
+    mrmovq  8(%rsp), %rax
+    mrmovq  -64(%rsp), %r12
+    rrmovq  %rax, %r13
+    subq    %r12, %r13
+    jl      L18
+    mrmovq  -72(%rsp), %rax
+    mrmovq  -120(%rsp), %r14
+    mulq    %r14, %rax
+    mrmovq  16(%rsp), %r8
+    subq    %rax, %r8
+    rmmovq  %r8, 16(%rsp)
+L4:
+    mrmovq  16(%rsp), %r9
+    iaddq   $0, %r9
+    jns     L19
+    nop
+    ret

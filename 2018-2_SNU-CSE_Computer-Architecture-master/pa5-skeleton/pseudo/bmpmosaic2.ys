@@ -1,0 +1,131 @@
+# rdi : imgptr -> loca / rsi : width(3*width) -> tmp / rdx : height -> cnt / rcx : size
+# rbx : $3 / rbp : oneline (3*w + padding bits) / rax : tmp.reg
+# r8 : i / r9 : j / r10 : 1st k / r11 : 1st l / r12 : r / r13: g / r14: b  
+
+bmp_mosaic:
+    irmovq $3, %rbx
+    mulq %rbx, %rsi         # rsi = 3w
+    addq %rsi, %rdi         # rdi = 3w + imgptr
+    rrmovq %rsi, %rax       # rax = 3w
+    rmmovq %rsi, -32(%rsp)  #-32에는 3w
+    rrmovq %rsi, %rbp       # rbp = 3w
+    rmmovq  %rdi, -40(%rsp)
+    andq %rbx, %rax         # rax = 3w % 4 
+    je L3
+L2:
+    iaddq   $4, %rbp      # rbp = 3w + 4
+    subq    %rax, %rbp    # rbp = 3w + 4 - 3w%4
+L3:
+    iaddq   $-1, %rdx           # rdx = h-1
+    rrmovq  %rcx, %rsi          # rsi = size
+    rrmovq  %rbp, %rax          # rax = oneline
+    mulq    %rbx, %rcx          # rcx = size * 3
+    rrmovq  %rbp, %r8
+    mulq    %rsi, %rax          # rax = oneline* size
+    rmmovq  %rsi, -72(%rsp)     # size = -72
+    mulq    %rdx, %r8           # online*(height-1)
+    rmmovq  %rax, -80(%rsp)     # oneline*size = -80
+L19:                       
+    xorq    %r9, %r9            # r9 = j                             #for i 시작
+    mrmovq  -32(%rsp), %rsi
+    mrmovq  -40(%rsp), %rdi
+    subq    %rsi, %r9           # r9 = j = -3w
+    addq    %r8, %rdi           # rdi = i + imgptr + 3w 
+    rmmovq  %rdi, -48(%rsp)
+L18:                                                     #for j 시작
+    mrmovq  -48(%rsp), %rdi
+    xorq     %r10, %r10      #k
+    xorq     %r12, %r12      #r
+    xorq     %r13, %r13      #g
+    addq    %r9, %rdi        #rdi = i + j + imgptr + 3w
+    xorq     %r14, %r14      #b
+    xorq     %rdx, %rdx      #cnt
+    rmmovq  %rdi, -56(%rsp)
+L11:                                                             #for k 시작
+    mrmovq  -56(%rsp), %rdi
+    xorq    %r11, %r11       # 첫번째 l
+    subq    %r10, %rdi       # rdi = i + j - k + 3w + imgptr
+    rmmovq  %rdi, -64(%rsp)
+L9:                                                         #for l 루프
+    mrmovq  -64(%rsp), %rdi
+    iaddq $1, %rdx              # cnt ++
+    addq   %r11, %rdi           # rdi = imgptr + i + j + 3w - k + l
+    mrmovb (%rdi), %rax
+    mrmovb 1(%rdi), %rsi
+    iaddq   $3, %r11            # l업데이트
+    mrmovb 2(%rdi), %rbx
+    addq %rax, %r12
+    addq %rsi, %r13
+    addq %rbx, %r14
+L7:                                                         #첫번째 l 테스트: (l < size) && (j + 3 * l < 0)
+    rrmovq  %r11, %rax         #rax = l
+    rrmovq  %r11, %rsi         #rsi = l
+    rrmovq  %r9, %rdi          #rdi = j
+    subq    %rcx, %rax         #rax = l - 3*size
+    addq    %rsi, %rdi         #rdi = j + l
+    mulq    %rax, %rdi         #곱이 > 0
+    jg      L9
+L8:                                                         # k 업뎃 & test: (k < oneline*size) && (i - k >= 0))
+    addq   %rbp, %r10            #k+=oneline
+    mrmovq   -80(%rsp), %rbx
+    rrmovq   %r8, %rsi     #rsi = i
+    rrmovq   %r10, %rax    #rax = k
+    subq     %rbx, %rax    #rax = k - oneline*size
+    jge      L10
+    subq     %r10, %rsi    #rax = i - k*oneline
+    jge      L11   
+L10:
+    xorq     %r10, %r10      #2nd k    
+L17:
+    mrmovq  -56(%rsp), %rdi
+    xorq    %r11, %r11       # 두번째 l
+    rrmovq  %r12, %rax
+    rrmovq  %r13, %rsi
+    rrmovq  %r14, %rbx
+    subq    %r10, %rdi       # rdi = i + j - k + 3w + imgptr
+    divq    %rdx, %rax
+    divq    %rdx, %rsi
+    divq    %rdx, %rbx
+    rmmovq  %rdi, -64(%rsp)
+L15:                                                    #두번째 루프
+    irmovq  $3, %rbx
+    mrmovq  -64(%rsp), %rdi
+    addq    %r11, %rdi       # rdi = imgptr + i + j + 3w - k + l
+    iaddq   $3, %r11            #l+=3
+    rmmovb  %rax, (%rdi)
+    rmmovb  %rsi, 1(%rdi)
+    rmmovb  %rbx, 2(%rdi)
+L13: #두번째 l 테스트
+
+    rrmovq  %r11, %rax         #rax = l
+    rrmovq  %r11, %rsi         #rsi = l
+    rrmovq  %r9, %rdi          #rdi = j
+    subq    %rcx, %rax         #rax = l - 3size
+    addq    %rsi, %rdi         #rdi = j + l
+    mulq    %rax, %rdi         #곱이 > 0
+    jg      L15
+
+L14:
+    addq   %rbp, %r10            #k+=oneline
+    mrmovq   -80(%rsp), %rbx
+    rrmovq   %r8, %rsi     #rsi = i
+    rrmovq   %r10, %rax    #rax = k
+    subq     %rbx, %rax    #rax = k - oneline*size
+    jge      L16
+    subq     %r10, %rsi    #rax = i - k
+    jge      L17
+
+L16:
+    addq      %rcx, %r9       # j = j + 3size
+
+L5:   # j test
+    jl        L18             # (첫번째) loop로 점프
+
+    mrmovq    -80(%rsp), %rax      # rax = oneline*size
+    subq      %rax, %r8       # r8 = i = i - oneline*size 그 다음 ith iteration 으로
+
+L4:         
+    jge       L19
+
+ret
+

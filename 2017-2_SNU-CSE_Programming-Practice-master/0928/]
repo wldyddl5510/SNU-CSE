@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+int main(void)
+{
+	int input[1000]={0};
+	int i;
+	int count=0;
+	int output[1000]={0};
+	int a;
+
+	while(input[i++]!=EOF);
+
+	while(1){
+	a=scanf("%d",&input[count]);
+	if(a!=EOF)
+	{
+		count++;
+	}
+	else 
+	{break;}
+	}
+
+	for(i=0;i<count;i++)
+	{
+		output[i]=input[(count-i)];
+		printf("%d ",output[i]);
+	}
+	
+	return 0;
+}
